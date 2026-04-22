@@ -1,10 +1,10 @@
 import numpy as np
 
 class BLUE:
-    def __init__(self, X=None, y=None):
+    def __init__(self, feature_space=None, target=None):
         super().__init__()
-        self.features = X
-        self.target = y
+        self.features = feature_space
+        self.target = target
         
     def coefficients(self):
         if self.features is None:
