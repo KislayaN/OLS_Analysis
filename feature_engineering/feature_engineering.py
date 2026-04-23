@@ -2,7 +2,7 @@ class Feature_Engineer:
     def __init__(self):
         super().__init__()
         
-    def perform(self, X_dataframe):
+    def fit(self, X_dataframe):
         X_dataframe = X_dataframe.copy()
         index_col = [col for col in X_dataframe.columns if len(X_dataframe) == X_dataframe[col].nunique()]
           
