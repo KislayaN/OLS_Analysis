@@ -6,7 +6,7 @@ class Load_data:
         self.dataset = None
         
     def get_data(self):
-        self.dataset = pd.read_csv("data/Admission_Predict.csv")
+        self.dataset = pd.read_csv("data/assets/Admission_Predict.csv")
         
         self.X_dataframe = self.dataset.iloc[:, :-1]
         self.target = self.dataset.iloc[:, [-1]]
