@@ -1,23 +1,34 @@
 import numpy as np
 
-class Gradient_Descent:
-    def __init__(self, alpha=None, epochs=None, feature_space=None, target=None, coefs=None):
+class Gradient_Descent_OLS:
+    def __init__(self, iterations=1000, learning_rate=None, tol=1e-6):
         super().__init__()
-        self.learning_rate = alpha
-        self.epochs = epochs
-        self.features = feature_space
-        self.target = target
-        self.n_samples = len(feature_space)
-        self.coefs = coefs
-        self.coefs_history = []
+        self.learning_rate = learning_rate
+        self.n_iter = iterations
+        self.tol = tol
+        self.cost_history = []
+        self.weights = None
         
-    def compute_coefficiets(self):
-        for epoch in range(self.epochs):
-            J = (((self.features * self.coefs) - self.target) ** 2) / self.n_samples
+    def fit(self, X, y):
+        X_b = np.column_stack((np.ones(len(X)), X))
+        m, n = X_b.shape
+        
+        self.weights = np.zeros(n)
+        
+        for epoch in range(self.n_iter):
+            prediction = X_b @ self.weights
+            error = prediction - y
             
-            del_J = 2 * (np.transpose(self.features) * ((self.features * self.coefs) - self.target) )
-            self.coefs = self.coefs - self.learning_rate * del_J
+            cost = (1/m) * np.sum(error**2)
+            self.cost_history.append(cost)
             
-            self.coefs_history = self.coefs_history.append(self.coefs)
+            # J = (((X_b @ self.weights) - y) ** 2) / m ----- objective function
             
-        return self.coefs
+            del_J = (2/m) * (X_b.T @ ((X_b @ self.weights) - y) )
+            new_weights = self.weights - self.learning_rate * del_J
+
+            if np.linalg.norm(new_weights - self.weights) < self.tol:
+                self.weights = new_weights
+                break
+            
+        return self.weights
