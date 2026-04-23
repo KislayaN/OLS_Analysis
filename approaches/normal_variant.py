@@ -20,28 +20,36 @@ class OLS:
         self.intercept = None
         
     def _add_intercept(self, X):
-        self.features = np.column_stack((np.ones(len(X)), X))
+        return np.column_stack((np.ones(len(X)), X))
         
     def fit(self, X, target):
-        X_model = self._add_intercept(X) if self.fit_intercept else X
+        X_val = X.values if hasattr(X, 'values') else X
+        y_val = target.values if hasattr(target, 'values') else target
+        
+        X_model = self._add_intercept(X_val) if self.fit_intercept else X_val
         
         # Using pinv (pseudo-inverse) is safer than inv for singular matrices
-        self.coefficients = np.linalg.pinv(X_model.T @ X_model) @ X_model.T @ target
+        beta_full = np.linalg.pinv(X_model.T @ X_model) @ X_model.T @ target
+        beta_full = np.array(beta_full).flatten()
         
         if self.fit_intercept: 
-            self.intercept = self.coefficients[0]
-            self.coefficients = self.coefficients[1:]
+            self.intercept = beta_full[0]
+            self.coefficients = beta_full[1:]
         else: 
             self.intercept = 0.0
+            self.coefficients = beta_full
     
     def predict(self, X):
         if self.coefficients is None:
             raise ValueError("Model not fitted yet. Call .fit() first")
         
-        X_model = self._add_intercept if self.fit_intercept else X
+        X_model = self._add_intercept() if self.fit_intercept else X
         
-        self.predicted_value = X_model @ self.coefficients 
-        return self.predicted_value
+        if self.fit_intercept:
+            beta_full = np.insert(self.coefficients, 0, self.intercept)
+            return X_model @ beta_full
+        
+        return X_model @ self.coefficients 
     
     def score(self, X, y):
         y_pred = self.predict(X)
