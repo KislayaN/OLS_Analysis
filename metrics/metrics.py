@@ -8,6 +8,9 @@ class Metric:
     def MSE_score(self, observed_value, predicted_value): 
         n = len(observed_value)
         
+        observed_value = np.asarray(observed_value, dtype=float).reshape(-1)
+        predicted_value = np.asarray(predicted_value, dtype=float).reshape(-1)
+        
         error = observed_value - predicted_value 
         mse = np.sum(error ** 2, axis=0) / n
         
