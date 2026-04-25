@@ -1,16 +1,13 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-import seaborn as sns
-
-from scipy.stats import t
 
 class Plot:
     def __init__(self):
         super().__init__()
     
     def plot_corr(self, X_dataframe, y_dataframe):
-        dataframe = pd.concat(X_dataframe, y_dataframe, axis=1)
+        dataframe = pd.concat((X_dataframe, y_dataframe), axis=1)
         
         corr_matrix = dataframe.corr()
         
@@ -94,14 +91,13 @@ class Plot:
         
         for model in models:
             if hasattr(model, 'cost_history'):
-                plt.plot(model.cost_history, label=f"{model.__class__.__name__} Learning Curvature")
+                plt.plot(model.cost_history, label=f"MSE ({model.__class__.__name__}): {model.cost_history[-1]}", alpha=0.5)
             elif hasattr(model, 'final_mse'):
-                plt.axhline(y=model.mse, label="Optimal Value for MSE")
+                plt.axhline(y=model.final_mse, label=f"MSE ({model.__class__.__name__}): {model.final_mse:.5f}", alpha=0.5)
         
-        plt.yscale('log')
         plt.xlabel("Iterations")
         plt.ylabel("MSE")
         plt.legend()
-        plt.title("Convergence differnce between Models")
+        plt.title("Convergence between Models based on MSE")
         plt.grid(alpha=0.5)
         plt.show()
