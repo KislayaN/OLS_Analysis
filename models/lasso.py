@@ -1,3 +1,14 @@
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+    
+from metrics.metrics import Metric
+
 import numpy as np
 
 class Lasso:
@@ -9,6 +20,14 @@ class Lasso:
         self.cost_history = []
         self.weights = None
         self.alpha = alpha
+        self.final_mse = 0.0
+        self.get_metric = Metric()
+        
+    def calculate_mse(self, prediction, target):
+        self.final_mse = self.get_metric.MSE_score(
+            predicted_value=prediction,
+            observed_value=target
+        )
         
     def fit(self, X, y):
         X_val = X.values if hasattr(X, 'values') else X
@@ -32,7 +51,7 @@ class Lasso:
             
             if self.fit_intercept:
                 l1_penalty = np.sign(self.weights)
-                l1_penalty[0, :] = 0
+                l1_penalty[0] = 0
             
             del_J = (2/m) * (X_model.T @ error) + (self.alpha * l1_penalty)
             
