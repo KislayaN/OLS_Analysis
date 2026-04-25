@@ -72,3 +72,18 @@ class Plot:
         plt.ylabel("Residuals")
         plt.title(title)
         plt.show()
+        
+    def compare_mse(self, Gradient_descent_mse,
+                          Linear_regression_mse,
+                          OLS_mse,
+                          Ridge_mse,
+                          Lasso_mse):
+        plt.plot(Gradient_descent_mse, label='MSE_GD', linestyle='--')
+        plt.plot(Linear_regression_mse, label='MSE_LR')
+        plt.plot(OLS_mse, label='MSE_OLS')
+        plt.plot(Ridge_mse, label='MSE_RIDGE')
+        plt.plot(Lasso_mse, label='MSE_LASSO')
+        plt.title("Comparing MSEs")
+        plt.legend()
+        plt.grid()
+        plt.plot()
