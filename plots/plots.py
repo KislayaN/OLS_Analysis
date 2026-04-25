@@ -85,5 +85,23 @@ class Plot:
         plt.plot(Lasso_mse, label='MSE_LASSO')
         plt.title("Comparing MSEs")
         plt.legend()
-        plt.grid()
+        plt.grid(alpha=0.5)
         plt.plot()
+        
+    def convergence_diff(self, models):
+        if not isinstance(models, list):
+            raise TypeError(f"Expected a list, but recieved {type(models).__name__}")
+        
+        for model in models:
+            if hasattr(model, 'cost_history'):
+                plt.plot(model.cost_history, label=f"{model.__class__.__name__} Learning Curvature")
+            elif hasattr(model, 'final_mse'):
+                plt.axhline(y=model.mse, label="Optimal Value for MSE")
+        
+        plt.yscale('log')
+        plt.xlabel("Iterations")
+        plt.ylabel("MSE")
+        plt.legend()
+        plt.title("Convergence differnce between Models")
+        plt.grid(alpha=0.5)
+        plt.show()
