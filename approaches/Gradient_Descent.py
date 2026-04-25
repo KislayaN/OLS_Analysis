@@ -1,3 +1,14 @@
+import sys
+import os
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, ".."))
+
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+    
+from metrics.metrics import Metric
+
 import numpy as np
 
 class Gradient_Descent_OLS:
@@ -10,9 +21,17 @@ class Gradient_Descent_OLS:
         self.weights = None
         self.intercept = None
         self.fit_intercept = fit_intercept
+        self.get_metric = Metric()
+        self.final_mse = 0.0
         
     def add_intercept(self, X):
         return np.column_stack((np.ones(len(X)), X))
+    
+    def calculate_mse(self, prediction, target):
+        self.final_mse = self.get_metric.MSE_score(
+            observed_value=target,
+            predicted_value=prediction
+        )
         
     def fit(self, X, y):
         X_val = X.values if hasattr(X, 'values') else X
