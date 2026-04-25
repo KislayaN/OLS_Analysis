@@ -18,10 +18,16 @@ class OLS:
         self.get_metric = Metric()
         self.coefficients = None
         self.intercept = None
-        self.final_mse = None
+        self.final_mse = 0.0
         
     def _add_intercept(self, X):
         return np.column_stack((np.ones(len(X)), X))
+    
+    def calculate_mse(self, prediction, target):
+        self.final_mse = self.get_metric.MSE_score(
+            predicted_value=prediction,
+            observed_value=target
+        )
         
     def fit(self, X, target):
         X_val = X.values if hasattr(X, 'values') else X
@@ -39,15 +45,8 @@ class OLS:
         else: 
             self.intercept = 0.0
             self.coefficients = beta_full
-            
-        weights = np.insert(self.coefficients, 0, self.intercept)
-        predicted_values = X_model @ weights
-        self.final_mse = self.get_metric.MSE_score(
-            observed_value=target, 
-            predicted_value=predicted_values
-        )
     
-    def predict(self, X, target):
+    def predict(self, X):
         if self.coefficients is None:
             raise ValueError("Model not fitted yet. Call .fit() first")
         
@@ -56,22 +55,9 @@ class OLS:
         
         if self.fit_intercept:
             beta_full = np.insert(self.coefficients, 0, self.intercept)
-            predicted_values = X_model @ beta_full
-            
-            self.final_mse = self.get_metric.MSE_score(
-                observed_value=target,
-                predicted_value=predicted_values 
-            )
-            
-            return predicted_values
+            return X_model @ beta_full
         
-        predicted_values = X_model @ self.coefficients
-        self.final_mse = self.get_metric.MSE_score(
-            observed_value=target,
-            predicted_value=predicted_values 
-        )
-        
-        return predicted_values
+        return X_model @ self.coefficients
     
     def score(self, X, y):
         y_pred = self.predict(X)
