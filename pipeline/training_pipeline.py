@@ -23,7 +23,7 @@ class Pipeline:
     def __init__(self):
         pass
     
-    def fit_pipline(self):
+    def fit_pipeline(self):
         # Load data
         data_loader = Load_data()
         X_dataframe, target = data_loader.get_data()
@@ -73,7 +73,7 @@ class Pipeline:
             fit_intercept=True)
         gradient_descent_ols.fit(X_train, y_train)
         
-        lasso = Lasso(fit_intercept=True)
+        lasso = Lasso(fit_intercept=True, iterations=5000)
         lasso.fit(X_train, y_train)
         
         ridge = Ridge(fit_intercept=True)
@@ -84,34 +84,59 @@ class Pipeline:
         
         # Predicting values
         
-        ols_pred = ols.predict(X_test)
-        ols.calculate_mse(
-            prediction=ols_pred,
+        ols_pred_test = ols.predict(X_test)
+        ols_pred_train = ols.predict(X_train)
+        ols_test_mse = ols.calculate_mse(
+            prediction=ols_pred_test,
             target=y_test
         )
-        
-        gradient_descent_ols_pred = gradient_descent_ols.predict(X_test)
-        gradient_descent_ols.calculate_mse(
-            prediction=gradient_descent_ols_pred,
-            target=y_test
+        ols_train_mse = ols.calculate_mse(
+            prediction=ols_pred_train,
+            target=y_train
         )
         
-        linear_reg_pred = linear_reg.predict(X_test)
-        linear_reg.calculate_mse(
-            prediction=linear_reg_pred,
+        gd_pred_test = gradient_descent_ols.predict(X_test)
+        gd_pred_train = gradient_descent_ols.predict(X_train)
+        gd_test_mse = gradient_descent_ols.calculate_mse(
+            prediction=gd_pred_test,
             target=y_test
         )
-        
-        lasso_pred = lasso.predict(X_test)
-        lasso.calculate_mse(
-            prediction=lasso_pred,
-            target=y_test
+        gd_train_mse = gradient_descent_ols.calculate_mse(
+            prediction=gd_pred_train,
+            target=y_train
         )
         
-        ridge_pred = ridge.predict(X_test)
-        ridge.calculate_mse(
-            prediction=ridge_pred,
+        lr_pred_test = linear_reg.predict(X_test)
+        lr_pred_train = linear_reg.predict(X_train)
+        lr_test_mse = linear_reg.calculate_mse(
+            prediction=lr_pred_test,
             target=y_test
+        )
+        lr_train_mse = linear_reg.calculate_mse(
+            prediction=lr_pred_train,
+            target=y_train
+        )
+        
+        lasso_pred_test = lasso.predict(X_test)
+        lasso_pred_train = lasso.predict(X_train)
+        lasso_test_mse = lasso.calculate_mse(
+            prediction=lasso_pred_test,
+            target=y_test
+        )
+        lasso_train_mse = lasso.calculate_mse(
+            prediction=lasso_pred_train,
+            target=y_train
+        )
+        
+        ridge_pred_test = ridge.predict(X_test)
+        ridge_pred_train = ridge.predict(X_train)
+        ridge_test_mse = ridge.calculate_mse(
+            prediction=ridge_pred_test,
+            target=y_test
+        )
+        ridge_train_mse = ridge.calculate_mse(
+            prediction=ridge_pred_train,
+            target=y_train
         )
         
         models_lst = [ols, gradient_descent_ols, linear_reg, lasso, ridge]
@@ -119,7 +144,17 @@ class Pipeline:
         plotter = Plot()
         plotter.convergence_diff(models_lst)
         
+        # Building MSE Distortion plot requirements
         # Should use all the models for train test gap plot
+        mse_dict_models = {}
         
-pipeline = Pipeline()
-pipeline.fit_pipline()
+        mse_dict_models['OLS'] = {'train_mse': ols_train_mse, 'test_mse': ols_test_mse}
+        mse_dict_models['LR'] = {'train_mse': lr_train_mse, 'test_mse': lr_test_mse}
+        mse_dict_models['GD'] = {'train_mse': gd_train_mse, 'test_mse': gd_test_mse}
+        mse_dict_models['RIDGE'] = {'train_mse': ridge_train_mse, 'test_mse': ridge_test_mse}
+        mse_dict_models['LASSO'] = {'train_mse': lasso_train_mse, 'test_mse': lasso_test_mse}
+        
+        plotter.plot_train_test_comparison(models_dict=mse_dict_models)
+        
+        # Get residuals
+        plotter.residual_plots(y_pred=ols_pred_train, y=y_train, title='Residual plot for OLS training set')
