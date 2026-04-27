@@ -13,7 +13,6 @@ import numpy as np
 
 class Gradient_Descent_OLS:
     def __init__(self, iterations=1000, learning_rate=0.01, tol=1e-6, fit_intercept=True):
-        super().__init__()
         self.learning_rate = learning_rate
         self.n_iter = iterations
         self.tol = tol
@@ -32,6 +31,7 @@ class Gradient_Descent_OLS:
             observed_value=target,
             predicted_value=prediction
         )
+        return self.final_mse
         
     def fit(self, X, y):
         X_val = X.values if hasattr(X, 'values') else X

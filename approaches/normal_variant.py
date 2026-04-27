@@ -28,6 +28,7 @@ class OLS:
             predicted_value=prediction,
             observed_value=target
         )
+        return self.final_mse
         
     def fit(self, X, target):
         X_val = X.values if hasattr(X, 'values') else X
@@ -76,7 +77,3 @@ class OLS:
         summary_dict['R2'] = self.get_metric.R2_Score(y=y, y_pred=y_pred)
         
         return summary_dict
-        
-    def resid(self, y, y_pred):
-        self.residuals = y - y_pred
-        return self.residuals
