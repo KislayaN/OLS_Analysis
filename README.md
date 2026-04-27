@@ -16,5 +16,5 @@ multicollinearity impact, and residual structure across multiple formulations.
 4. Preprocessing Effects - Scaling impact
 
 ## Architecture (Flow of execution and Design logic)
-![Data Load Code Structure](OLS/readme-files/load-data.png)
+![Data Load Code Structure]('readme-files/load-data.png')
 
