@@ -28,6 +28,7 @@ class Lasso:
             predicted_value=prediction,
             observed_value=target
         )
+        return self.final_mse
         
     def fit(self, X, y):
         X_val = X.values if hasattr(X, 'values') else X

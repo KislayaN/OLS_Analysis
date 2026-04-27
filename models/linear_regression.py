@@ -32,3 +32,4 @@ class Linear_Regression:
             observed_value=target,
             predicted_value=prediction
         )
+        return self.final_mse
